@@ -1,0 +1,40 @@
+#!/usr/bin/node
+
+"use strict"
+
+const vorpal = require('vorpal')();
+var cmd = {}
+
+
+cmd.list = vorpal.command('list', 'List remux processes.')
+cmd.list.action(function(args, callback) {
+  callback()
+});
+
+
+cmd.start = vorpal.command('start', '')
+cmd.start.action(function(args, callback) {
+  callback()
+});
+
+
+cmd.stop = vorpal.command('stop', '')
+cmd.stop.action(function(args, callback) {
+  callback()
+});
+
+
+cmd.restart = vorpal.command('restart', '')
+cmd.restart.action(function(args, callback) {
+  callback()
+});
+
+
+cmd.info = vorpal.command('info', '')
+cmd.info.action(function(args, callback) {
+  callback()
+});
+
+vorpal
+  .delimiter('[#][remux] ')
+  .show();

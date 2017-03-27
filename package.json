@@ -1,0 +1,35 @@
+{
+  "name": "remuxme",
+  "version": "1.0.0",
+  "description": "ffmpeg process manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remux-io/remuxme.git"
+  },
+  "author": "remux.io",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/remux-io/remuxme/issues"
+  },
+  "homepage": "https://github.com/remux-io/remuxme#readme",
+  "keywords": [
+    "ffmpeg",
+    "process",
+    "manager",
+    "cpu",
+    "affinity"
+  ],
+  "dependencies": {
+    "cli-table2": "^0.2.0",
+    "express": "^4.15.2",
+    "express-graphql": "^0.6.3",
+    "graphql": "^0.9.1",
+    "jsonfile": "^2.4.0",
+    "pm2": "^2.4.2",
+    "vorpal": "^1.11.4"
+  }
+}
