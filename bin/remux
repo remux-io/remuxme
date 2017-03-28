@@ -3,11 +3,17 @@
 "use strict"
 
 const vorpal = require('vorpal')();
+const client_api = require('../').client
 var cmd = {}
 
 
 cmd.list = vorpal.command('list', 'List remux processes.')
 cmd.list.action(function(args, callback) {
+  var this_cmd = this
+  var client = new client_api()
+  client.exec(null, null, function(err, list){
+    this_cmd.log(JSON.stringify(list))
+  })
   callback()
 });
 
