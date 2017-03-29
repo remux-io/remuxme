@@ -1,8 +1,15 @@
 {
   "name": "remuxme",
+  "preferGlobal": true,
   "version": "1.0.0",
+  "engines": {
+    "node": ">=6.9"
+  },
   "description": "ffmpeg process manager",
   "main": "index.js",
+  "bin": {
+    "remux": "./bin/remux"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,10 +25,25 @@
   "homepage": "https://github.com/remux-io/remuxme#readme",
   "keywords": [
     "ffmpeg",
-    "process",
-    "manager",
+    "node",
+    "monitoring",
+    "cli",
+    "service",
+    "remux",
+    "video",
+    "framework",
+    "system",
+    "tool",
+    "node.js monitoring",
+    "reload",
+    "transcoding",
+    "movie",
+    "stats",
+    "proc",
     "cpu",
-    "affinity"
+    "memory",
+    "cpu affinity",
+    "demon"
   ],
   "dependencies": {
     "chalk": "^1.1.3",
@@ -35,5 +57,12 @@
     "pmx": "^1.0.4",
     "request": "^2.81.0",
     "vorpal": "^1.11.4"
+  },
+  "runtime": {
+      "framework": "node",
+      "version": "6.8.1",
+      "js-flags": "--use_strict",
+      "ignoreFlags": true
   }
+
 }
