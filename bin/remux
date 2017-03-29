@@ -16,10 +16,16 @@ cmd.list.action(function(args, callback) {
   var this_cmd = this
   var client = new client_api()
   client.exec(null, null, function(err, list){
-    this_cmd.log("List of remux-ffmpeg services:\n"
-      +pretty_cli.processes_table(list.data.list).toString()+'\n')
+    if (err){
+      this_cmd.log('Cannot connect to Remux server. Please try to execute command "server start" and try again.')
+      if (callback) callback()
+    }else{
+      this_cmd.log("List of remux-ffmpeg services:\n"
+        +pretty_cli.processes_table(list.data.list).toString()+'\n')
+      if (callback) callback()
+    }
+
   })
-  callback()
 });
 
 cmd.start = vorpal.command('start <id>', 'Start ffmpeg service.')
@@ -27,10 +33,15 @@ cmd.start.action(function(args, callback) {
   var this_cmd = this
   var client = new client_api()
   client.exec('start', args, function(err, list){
-    this_cmd.log("List of remux-ffmpeg services:\n"
-      +pretty_cli.processes_table(list.data.start).toString()+'\n')
+    if (err){
+      this_cmd.log('Cannot connect to Remux server. Please try to execute command "server start" and try again.')
+      if (callback) callback()
+    }else{
+      this_cmd.log("List of remux-ffmpeg services:\n"
+        +pretty_cli.processes_table(list.data.start).toString()+'\n')
+      if (callback) callback()
+    }
   })
-  callback()
 });
 
 
@@ -39,24 +50,29 @@ cmd.stop.action(function(args, callback) {
   var this_cmd = this
   var client = new client_api()
   client.exec('stop', args, function(err, list){
-    this_cmd.log("List of remux-ffmpeg services:\n"
-      +pretty_cli.processes_table(list.data.stop).toString()+'\n')
+    if (err){
+      this_cmd.log('Cannot connect to Remux server. Please try to execute command "server start" and try again.')
+      if (callback) callback()
+    }else{
+      this_cmd.log("List of remux-ffmpeg services:\n"
+        +pretty_cli.processes_table(list.data.stop).toString()+'\n')
+      if (callback) callback()
+    }
   })
-  callback()
 });
 
 
 cmd.restart = vorpal.command('restart <id>', 'Restart ffmpeg service.')
 cmd.restart.action(function(args, callback) {
   this.log('not implemented :: in todo')
-  callback()
+  if (callback) callback()
 });
 
 
 cmd.info = vorpal.command('info <id>', 'Get full information about ffmpeg service.')
 cmd.info.action(function(args, callback) {
   this.log('not implemented :: in todo')
-  callback()
+  if (callback) callback()
 });
 
 //command
@@ -66,17 +82,17 @@ cmd.start_server.action(function(args, callback) {
   var server = new server_api()
   server.start(function(err, msg){
     this_cmd.log(msg)
-    callback()
+    if (callback) callback()
   })
 });
 
-cmd.start_reserver = vorpal.command('server restart', 'Restart Remux server.')
-cmd.start_reserver.action(function(args, callback) {
+cmd.restart_server = vorpal.command('server restart', 'Restart Remux server.')
+cmd.restart_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
   server.start(function(err, msg){
     this_cmd.log(msg)
-    callback()
+    if (callback) callback()
   })
 });
 
@@ -87,7 +103,7 @@ cmd.stop_server.action(function(args, callback) {
   var server = new server_api()
   server.stop(function(err, msg){
     this_cmd.log(msg)
-    callback()
+    if (callback) callback()
   })
 });
 
@@ -103,7 +119,7 @@ cmd.set.action(function(args, callback){
     this_cmd.log(pretty_cli.env_table(config.remux.list()).toString())
   }
 
-  callback()
+  if (callback) callback()
 })
 
 
@@ -112,8 +128,12 @@ cmd.set.action(function(args, callback){
 cmd.debug = vorpal.command('__node_process')
 cmd.debug.action(function(args, callback){
   this.log(process);
-  callback()
+  if (callback) callback()
 })
+
+
+
+vorpal.execSync('server start')
 
 vorpal
   .delimiter('[#][remux] ')
