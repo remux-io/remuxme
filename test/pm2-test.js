@@ -13,12 +13,15 @@ pm2.connect(function(err){
 
   pm2.list(function(err, processes){
     processes.forEach(function(proc){
-      console.log(proc);
+      console.log(proc.name, '-->', proc.pm2_env.status);
     })
   })
 
-  // pm2.describe('remux_ffmpeg_btv', function(err, app){
-  //   console.log('err:',err);
-  //   console.log('app:',app);
-  // })
 })
+
+
+pm2.launchBus(function(err, bus) {
+  bus.on('log:out', function(data){
+    console.log(data);
+  });
+});

@@ -14,6 +14,21 @@
         "-y",   "udp://127.0.0.1:30000"
       ],
       "cpus"      : "0-1"
+    },
+    {
+      "name"      : "nova",
+      "program"   : "/usr/bin/ffmpeg",
+      "args"      : [
+        "-re",
+        "-f",   "lavfi",
+        "-i",   "testsrc=duration=-1:size=640x360:rate=25",
+        "-c:v", "libx264",
+        "-g",   "50",
+        "-r",   "25",
+        "-f",   "mpegts",
+        "-y",   "udp://127.0.0.1:30001"
+      ],
+      "cpus"      : "0-1"
     }
   ]
 }

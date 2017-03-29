@@ -4,6 +4,9 @@
 
 const vorpal = require('vorpal')();
 const client_api = require('../').client
+const server_api = require('../').server
+const pretty_cli = require('../lib/pretty-cli');
+
 var cmd = {}
 
 
@@ -12,34 +15,71 @@ cmd.list.action(function(args, callback) {
   var this_cmd = this
   var client = new client_api()
   client.exec(null, null, function(err, list){
-    this_cmd.log(JSON.stringify(list))
+    this_cmd.log("List of remux-ffmpeg services:\n"
+      +pretty_cli.processes_table(list.data.list).toString()+'\n')
+  })
+  callback()
+});
+
+cmd.start = vorpal.command('start <id>', 'Start ffmpeg service.')
+cmd.start.action(function(args, callback) {
+  var this_cmd = this
+  var client = new client_api()
+  client.exec('start', args, function(err, list){
+    this_cmd.log("List of remux-ffmpeg services:\n"
+      +pretty_cli.processes_table(list.data.start).toString()+'\n')
   })
   callback()
 });
 
 
-cmd.start = vorpal.command('start', '')
-cmd.start.action(function(args, callback) {
-  callback()
-});
-
-
-cmd.stop = vorpal.command('stop', '')
+cmd.stop = vorpal.command('stop <id>', 'Stop ffmpeg service.')
 cmd.stop.action(function(args, callback) {
+  var this_cmd = this
+  var client = new client_api()
+  client.exec('stop', args, function(err, list){
+    this_cmd.log("List of remux-ffmpeg services:\n"
+      +pretty_cli.processes_table(list.data.stop).toString()+'\n')
+  })
   callback()
 });
 
 
-cmd.restart = vorpal.command('restart', '')
+cmd.restart = vorpal.command('restart <id>', 'Restart ffmpeg service.')
 cmd.restart.action(function(args, callback) {
+  this.log('not implemented :: in todo')
   callback()
 });
 
 
-cmd.info = vorpal.command('info', '')
+cmd.info = vorpal.command('info <id>', 'Get full information about ffmpeg service.')
 cmd.info.action(function(args, callback) {
+  this.log('not implemented :: in todo')
   callback()
 });
+
+
+cmd.info = vorpal.command('start server', 'Start/Restart Remux server.')
+cmd.info.action(function(args, callback) {
+  var this_cmd = this
+  var server = new server_api()
+  server.start(function(err, msg){
+    this_cmd.log(msg)
+    callback()
+  })
+});
+
+cmd.info = vorpal.command('stop server', 'Stop Remux server.')
+cmd.info.action(function(args, callback) {
+  var this_cmd = this
+  var server = new server_api()
+  server.stop(function(err, msg){
+    this_cmd.log(msg)
+    callback()
+  })
+});
+
+
 
 vorpal
   .delimiter('[#][remux] ')
