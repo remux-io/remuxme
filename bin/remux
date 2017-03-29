@@ -79,6 +79,7 @@ cmd.info.action(function(args, callback) {
   })
 });
 
+
 cmd.debug = vorpal.command('debug')
 cmd.debug.action(function(args, callback){
   this.log(process);
