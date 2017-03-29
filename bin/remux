@@ -60,7 +60,7 @@ cmd.info.action(function(args, callback) {
 });
 
 //command
-cmd.start_server = vorpal.command('start server', 'Start/Restart Remux server.')
+cmd.start_server = vorpal.command('server start', 'Start/Restart Remux server.')
 cmd.start_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
@@ -70,8 +70,18 @@ cmd.start_server.action(function(args, callback) {
   })
 });
 
+cmd.start_reserver = vorpal.command('server restart', 'Restart Remux server.')
+cmd.start_reserver.action(function(args, callback) {
+  var this_cmd = this
+  var server = new server_api()
+  server.start(function(err, msg){
+    this_cmd.log(msg)
+    callback()
+  })
+});
+
 //command info
-cmd.stop_server = vorpal.command('stop server', 'Stop Remux server.')
+cmd.stop_server = vorpal.command('server stop', 'Stop Remux server.')
 cmd.stop_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
