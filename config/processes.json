@@ -1,8 +1,9 @@
 {
   "processes" :[
     {
-      "name"      : "btv",
-      "program"   : "/usr/bin/ffmpeg",
+      "name"      : "NullTV",
+      "description" : "Ffmpeg testsrc to udp://127.0.0.1:30000",
+      "program"   : null,
       "args"      : [
         "-re",
         "-f",   "lavfi",
@@ -16,8 +17,9 @@
       "cpus"      : "0-1"
     },
     {
-      "name"      : "nova",
-      "program"   : "/usr/bin/ffmpeg",
+      "name"      : "UndefindTV",
+      "description" : "Ffmpeg testsrc to udp://127.0.0.1:30001",
+      "program"   : null,
       "args"      : [
         "-re",
         "-f",   "lavfi",

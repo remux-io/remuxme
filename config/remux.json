@@ -4,5 +4,6 @@
   "port": 4444,
   "debugGraphiQL": true,
   "admin": "remux",
-  "pass": "remuxme"
+  "pass": "remuxme",
+  "ffmpegDefaultPath": "/usr/bin/ffmpeg"
 }
