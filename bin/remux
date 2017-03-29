@@ -5,7 +5,8 @@
 const vorpal = require('vorpal')();
 const client_api = require('../').client
 const server_api = require('../').server
-const pretty_cli = require('../lib/pretty-cli');
+const config = require('../lib/config.js');
+const pretty_cli = require('../lib/pretty-cli.js');
 
 var cmd = {}
 
@@ -58,9 +59,9 @@ cmd.info.action(function(args, callback) {
   callback()
 });
 
-
-cmd.info = vorpal.command('start server', 'Start/Restart Remux server.')
-cmd.info.action(function(args, callback) {
+//command
+cmd.start_server = vorpal.command('start server', 'Start/Restart Remux server.')
+cmd.start_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
   server.start(function(err, msg){
@@ -69,8 +70,9 @@ cmd.info.action(function(args, callback) {
   })
 });
 
-cmd.info = vorpal.command('stop server', 'Stop Remux server.')
-cmd.info.action(function(args, callback) {
+//command info
+cmd.stop_server = vorpal.command('stop server', 'Stop Remux server.')
+cmd.stop_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
   server.stop(function(err, msg){
@@ -79,8 +81,25 @@ cmd.info.action(function(args, callback) {
   })
 });
 
+//command set
+cmd.set = vorpal.command('set [var] [value]', 'Set or view Remux valiables.')
+cmd.set.action(function(args, callback){
+  var this_cmd = this
+  if(args.var != null && args.value == null){
+    this_cmd.log(config.remux.get(args.var))
+  }else if(args.var != null && args.value != null){
+    this_cmd.log(config.remux.set(args.var, args.value))
+  }else{
+    this_cmd.log(pretty_cli.env_table(config.remux.list()).toString())
+  }
 
-cmd.debug = vorpal.command('debug')
+  callback()
+})
+
+
+
+
+cmd.debug = vorpal.command('__node_process')
 cmd.debug.action(function(args, callback){
   this.log(process);
   callback()
