@@ -91,9 +91,61 @@ cmd.restart.action(function(args, callback) {
 
 cmd.info = vorpal.command('info <id>', 'Get full information about ffmpeg service.')
 cmd.info.action(function(args, callback) {
-  this.log('not implemented :: in todo')
-  if (callback) callback()
+  var this_cmd = this
+  var client = new client_api()
+  client.exec('info', args, function(err, list){
+    if (err){
+      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      if (callback) callback()
+    }else{
+      this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+      this_cmd.log(pretty_cli.env_table(list).toString())
+      if (callback) callback()
+    }
+  })
 });
+
+
+//command set
+cmd.set = vorpal.command('process set <id> [variable] [value]', 'Set or view ffmpeg-service valiables.')
+cmd.set.action(function(args, callback){
+  var this_cmd = this
+  var client = new client_api()
+
+  if(args.variable != null && args.value == null){
+    client.exec('process_get', args, function(err, msg){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue(`[process]:: ${args.id}; [value of "${args.variable}"]:: ${msg}`))
+        if (callback) callback()
+      }
+    })
+  }else if(args.variable != null && args.value != null){
+    client.exec('process_set', args, function(err, msg){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue(msg))
+        if (callback) callback()
+      }
+    })
+  }else{
+    client.exec('info', args, function(err, list){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+        this_cmd.log(pretty_cli.env_table(list).toString())
+        if (callback) callback()
+      }
+    })
+  }
+})
+
 
 //command
 cmd.start_server = vorpal.command('server start', 'Start/Restart Remux server.')
@@ -138,7 +190,7 @@ cmd.stop_server.action(function(args, callback) {
 });
 
 //command set
-cmd.set = vorpal.command('set [variable] [value]', 'Set or view Remux valiables.')
+cmd.set = vorpal.command('server set [variable] [value]', 'Set or view Remux valiables.')
 cmd.set.action(function(args, callback){
   var this_cmd = this
   var client = new client_api()
@@ -175,8 +227,6 @@ cmd.set.action(function(args, callback){
       }
     })
   }
-
-  if (callback) callback()
 })
 
 
