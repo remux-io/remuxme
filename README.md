@@ -1,13 +1,6 @@
-
-```
-   ____  _____ __  __ _   ___  __  ___ ___
-  |  _ \| ____|  \/  | | | \ \/ / |_ _/ _ \
-  | |_) |  _| | |\/| | | | |\  /   | | | | |
-  |  _ <| |___| |  | | |_| |/  \ _ | | |_| |
-  |_| \_\_____|_|  |_|\___//_/\_(_)___\___/
-```
 # remuxme (beta)
 Ffmpeg process manager
+(cli and graphql)
 
 
 ![remuxcli](https://raw.githubusercontent.com/remux-io/remuxme/master/img/remuxcli.png "remux cli")
