@@ -1,0 +1,18 @@
+[
+  {
+    "name": "test_1",
+    "ssl": false,
+    "host": "192.168.1.105",
+    "port": 4444,
+    "user": "remux",
+    "pass": "remuxme"
+  },
+  {
+    "name": "yakuza_trascoder_2",
+    "ssl": false,
+    "host": "192.168.1.102",
+    "port": 4000,
+    "user": "remux",
+    "pass": "remuxme"
+  }
+]

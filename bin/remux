@@ -18,13 +18,30 @@ const server_api = require('../').server
 const config = require('../lib/config.js');
 const pretty_cli = require('../lib/pretty-cli.js');
 
+
 var cmd = {}
+var connection_source = null
+
+
+function delimiter(){
+    if (connection_source){
+        vorpal.delimiter(`[#][remux][${connection_source.name}] `)
+    }else{
+        vorpal.delimiter('[#][remux][local] ')
+    }
+}
 
 
 cmd.list = vorpal.command('list', 'List remux processes.')
 cmd.list.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec(null, null, function(err, list){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -41,7 +58,15 @@ cmd.list.action(function(args, callback) {
 cmd.start = vorpal.command('start <id>', 'Start ffmpeg service.')
 cmd.start.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
+
   client.exec('start', args, function(err, list){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -58,7 +83,13 @@ cmd.start.action(function(args, callback) {
 cmd.stop = vorpal.command('stop <id>', 'Stop ffmpeg service.')
 cmd.stop.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec('stop', args, function(err, list){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -75,7 +106,13 @@ cmd.stop.action(function(args, callback) {
 cmd.restart = vorpal.command('restart <id>', 'Restart ffmpeg service.')
 cmd.restart.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec('start', args, function(err, list){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -92,7 +129,13 @@ cmd.restart.action(function(args, callback) {
 cmd.info = vorpal.command('info <id>', 'Get full information about ffmpeg service.')
 cmd.info.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec('info', args, function(err, list){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -110,7 +153,13 @@ cmd.info.action(function(args, callback) {
 cmd.set = vorpal.command('process set <id> [variable] [value]', 'Set or view ffmpeg-service valiables.')
 cmd.set.action(function(args, callback){
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
 
   if(args.variable != null && args.value == null){
     client.exec('process_get', args, function(err, msg){
@@ -161,7 +210,13 @@ cmd.start_server.action(function(args, callback) {
 cmd.restart_server = vorpal.command('server restart', 'Restart Remux server.')
 cmd.restart_server.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec('server_restart', args, function(err, msg){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -177,7 +232,13 @@ cmd.restart_server.action(function(args, callback) {
 cmd.stop_server = vorpal.command('server stop', 'Stop Remux server.')
 cmd.stop_server.action(function(args, callback) {
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
   client.exec('server_stop', args, function(err, msg){
     if (err){
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
@@ -190,11 +251,16 @@ cmd.stop_server.action(function(args, callback) {
 });
 
 //command set
-cmd.set = vorpal.command('server set [variable] [value]', 'Set or view Remux valiables.')
-cmd.set.action(function(args, callback){
+cmd.server_set = vorpal.command('server set [variable] [value]', 'Set or view Remux valiables.')
+cmd.server_set.action(function(args, callback){
   var this_cmd = this
-  var client = new client_api()
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
 
+  var client = new client_api(connection_source)
   if(args.variable != null && args.value == null){
     client.exec('server_get', args, function(err, msg){
       if (err){
@@ -229,6 +295,83 @@ cmd.set.action(function(args, callback){
   }
 })
 
+cmd.server_local = vorpal.command('connect local', 'Connect to local server.')
+cmd.server_local.action(function(args, callback){
+    var this_cmd = this
+    connection_source = null;
+    delimiter()
+    this_cmd.log('Remux connection changed to local.')
+    if (callback) callback()
+})
+
+
+cmd.server_connect = vorpal.command('connect host <id>', 'Connect to remote server.')
+cmd.server_connect.action(function(args, callback){
+    var this_cmd = this
+    connection_source = config.hosts.info(args.id)
+    delimiter()
+    this_cmd.log(`Remux connection changed to ${connection_source.name}.`)
+    if (callback) callback()
+})
+
+
+cmd.server_info = vorpal.command('connect info', 'Info for current Remux host connection.')
+cmd.server_info.action(function(args, callback){
+    var this_cmd = this
+
+    if (connection_source){
+        this_cmd.log(pretty_cli.env_table(connection_source).toString())
+    }else{
+        this_cmd.log('[info]:: Connected to local Remux server.')
+    }
+
+    if (callback) callback()
+})
+
+
+cmd.host_list = vorpal.command('host list', 'List of configured remote hosts.')
+cmd.host_list.action(function(args, callback){
+    var this_cmd = this
+    this_cmd.log(pretty_cli.chalk.gray.bold("List of hosts:\n")
+      +pretty_cli.hosts_table(config.hosts.list()).toString()+'\n')
+    if (callback) callback()
+})
+
+
+cmd.host_settings = vorpal.command('host settings <id>', 'Get host settings by id.')
+cmd.host_settings.action(function(args, callback){
+    var this_cmd = this
+    this_cmd.log(pretty_cli.env_table(config.hosts.info(args.id)).toString())
+    if (callback) callback()
+})
+
+
+cmd.host_add = vorpal.command('host add <name> <ssl> <host> <port> <user> <pass>', 'Add new host.')
+cmd.host_add.action(function(args, callback){
+    var this_cmd = this
+    config.hosts.add(args)
+    this_cmd.log(pretty_cli.env_table(config.hosts.info(config.hosts.list().length-1)).toString())
+    if (callback) callback()
+})
+
+
+cmd.host_remove = vorpal.command('host remove <id>', 'Remove host configuration.')
+cmd.host_remove.action(function(args, callback){
+    var this_cmd = this
+    this_cmd.log(pretty_cli.chalk.gray.bold("List of hosts:\n")
+      +pretty_cli.hosts_table(config.hosts.remove(args.id)).toString()+'\n')
+    if (callback) callback()
+})
+
+
+cmd.host_set = vorpal.command('host set <id> <variable> <value>', 'Set host valiable.')
+cmd.host_set.action(function(args, callback){
+    var this_cmd = this
+    this_cmd.log(pretty_cli.chalk.blue(config.hosts.set(args.id, args.variable, args.value)))
+    if (callback) callback()
+})
+
+
 
 
 
@@ -237,6 +380,7 @@ cmd.debug.action(function(args, callback){
   this.log(process);
   if (callback) callback()
 })
+
 
 
 vorpal.log(pretty_cli.chalk.green(`
@@ -252,6 +396,5 @@ vorpal.log('')
 
 vorpal.execSync('server start')
 
-vorpal
-  .delimiter('[#][remux] ')
-  .show();
+delimiter()
+vorpal.show();
