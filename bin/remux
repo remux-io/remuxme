@@ -31,7 +31,7 @@ cmd.list.action(function(args, callback) {
       if (callback) callback()
     }else{
       this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
-        +pretty_cli.processes_table(list.data.list).toString()+'\n')
+        +pretty_cli.processes_table(list).toString()+'\n')
       if (callback) callback()
     }
 
@@ -47,8 +47,8 @@ cmd.start.action(function(args, callback) {
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
       if (callback) callback()
     }else{
-      this_cmd.log("List of remux-ffmpeg services:\n"
-        +pretty_cli.processes_table(list.data.start).toString()+'\n')
+      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
+        +pretty_cli.processes_table(list).toString()+'\n')
       if (callback) callback()
     }
   })
@@ -64,8 +64,8 @@ cmd.stop.action(function(args, callback) {
       this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
       if (callback) callback()
     }else{
-      this_cmd.log("List of remux-ffmpeg services:\n"
-        +pretty_cli.processes_table(list.data.stop).toString()+'\n')
+      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
+        +pretty_cli.processes_table(list).toString()+'\n')
       if (callback) callback()
     }
   })
@@ -74,8 +74,18 @@ cmd.stop.action(function(args, callback) {
 
 cmd.restart = vorpal.command('restart <id>', 'Restart ffmpeg service.')
 cmd.restart.action(function(args, callback) {
-  this.log('not implemented :: in todo')
-  if (callback) callback()
+  var this_cmd = this
+  var client = new client_api()
+  client.exec('start', args, function(err, list){
+    if (err){
+      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      if (callback) callback()
+    }else{
+      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
+        +pretty_cli.processes_table(list).toString()+'\n')
+      if (callback) callback()
+    }
+  })
 });
 
 
@@ -99,10 +109,15 @@ cmd.start_server.action(function(args, callback) {
 cmd.restart_server = vorpal.command('server restart', 'Restart Remux server.')
 cmd.restart_server.action(function(args, callback) {
   var this_cmd = this
-  var server = new server_api()
-  server.start(function(err, msg){
-    this_cmd.log(pretty_cli.chalk.gray.bold(msg))
-    if (callback) callback()
+  var client = new client_api()
+  client.exec('server_restart', args, function(err, msg){
+    if (err){
+      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      if (callback) callback()
+    }else{
+      this_cmd.log("[server message]:: "+pretty_cli.chalk.gray.bold(msg))
+      if (callback) callback()
+    }
   })
 });
 
@@ -110,23 +125,55 @@ cmd.restart_server.action(function(args, callback) {
 cmd.stop_server = vorpal.command('server stop', 'Stop Remux server.')
 cmd.stop_server.action(function(args, callback) {
   var this_cmd = this
-  var server = new server_api()
-  server.stop(function(err, msg){
-    this_cmd.log(pretty_cli.chalk.gray.bold(msg))
-    if (callback) callback()
+  var client = new client_api()
+  client.exec('server_stop', args, function(err, msg){
+    if (err){
+      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      if (callback) callback()
+    }else{
+      this_cmd.log("[server message]:: "+pretty_cli.chalk.gray.bold(msg))
+      if (callback) callback()
+    }
   })
 });
 
 //command set
-cmd.set = vorpal.command('set [var] [value]', 'Set or view Remux valiables.')
+cmd.set = vorpal.command('set [variable] [value]', 'Set or view Remux valiables.')
 cmd.set.action(function(args, callback){
   var this_cmd = this
-  if(args.var != null && args.value == null){
-    this_cmd.log(pretty_cli.chalk.blue.bold(config.remux.get(args.var)))
-  }else if(args.var != null && args.value != null){
-    this_cmd.log(pretty_cli.chalk.blue.bold(config.remux.set(args.var, args.value)))
+  var client = new client_api()
+
+  if(args.variable != null && args.value == null){
+    client.exec('server_get', args, function(err, msg){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue(`[value of "${args.variable}"]:: ${msg}`))
+        if (callback) callback()
+      }
+    })
+  }else if(args.variable != null && args.value != null){
+    client.exec('server_set', args, function(err, msg){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue(msg))
+        if (callback) callback()
+      }
+    })
   }else{
-    this_cmd.log(pretty_cli.env_table(config.remux.list()).toString())
+    client.exec('server_listSets', args, function(err, list){
+      if (err){
+        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        if (callback) callback()
+      }else{
+        this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+        this_cmd.log(pretty_cli.env_table(list).toString())
+        if (callback) callback()
+      }
+    })
   }
 
   if (callback) callback()
