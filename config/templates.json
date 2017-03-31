@@ -1,0 +1,19 @@
+[
+  {
+    "name":"transcoder",
+    "program":null,
+    "args":[
+      "-re",
+      "-i", "${remux:{in:source}}",
+      "-c:v", "libx264",
+      "-g", "50",
+      "-r", "25",
+      "-f", "hls",
+      "-hls_time", "2",
+      "-hls_list_size", "30",
+      "-hls_flags", "delete_segments",
+      "-hls_segment_filename", "${remux:{out:hls:segment_path}}",
+      "-y", "${remux:{out:hls:playlist_path}}"
+    ]
+  }
+]

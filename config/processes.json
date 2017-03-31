@@ -17,20 +17,15 @@
       "cpus"      : "0-1"
     },
     {
-      "name"      : "UndefindTV",
-      "description" : "Ffmpeg testsrc to udp://127.0.0.1:30001",
-      "program"   : null,
-      "args"      : [
-        "-re",
-        "-f",   "lavfi",
-        "-i",   "testsrc=duration=-1:size=640x360:rate=25",
-        "-c:v", "libx264",
-        "-g",   "50",
-        "-r",   "25",
-        "-f",   "mpegts",
-        "-y",   "udp://127.0.0.1:30001"
-      ],
-      "cpus"      : "0-1"
+      "name"                    : "TemplateTV",
+      "description"             : "[still no work] Using ffmpeg template.",
+      "program"                 : null,
+      "args"                    : null,
+      "template"                : "transcoder",
+      "in:source"               : "udp://127.0.0.1:30000",
+      "out:hls:segment_path"    : "/home/yakuza/test/hls/file%03d.ts",
+      "out:hls:playlist_path"   : "/home/yakuza/test/hls/pl.m3u8",
+      "cpus"                    : "0-1"
     }
   ]
 }
