@@ -7,15 +7,19 @@ Ffmpeg process manager
 
 
 ### installation
+
 ```
 $ npm install https://github.com/remux-io/remuxme.git -g
 ```
-or
-```
-$ git clone https://github.com/remux-io/remuxme.git
-$ cd remuxme
-$ npm install
-```
+
+### features
+- ffmpeg as process
+- auto restart on fail
+- remote ffmpeg processes management
+- cpu affinity
+- command line
+- graphql api
+
 
 ### start cli
 ```
@@ -40,8 +44,6 @@ graphql
 ### road map
   - graphql auth
   - logs streaming
-  - manage remote remux-ffmpeg services from client
-  - cpu affinity
   - modules integration
   - user manual
   - api documentation
