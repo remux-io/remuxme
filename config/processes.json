@@ -21,10 +21,33 @@
       "description"             : "[still no work] Using ffmpeg template.",
       "program"                 : null,
       "args"                    : null,
-      "template"                : "transcoder",
-      "in:source"               : "udp://127.0.0.1:30000",
-      "out:hls:segment_path"    : "/home/yakuza/test/hls/file%03d.ts",
-      "out:hls:playlist_path"   : "/home/yakuza/test/hls/pl.m3u8",
+      "template"                : "test-add",
+"variables":[
+      	{
+          "variable":"video:width",
+          "value":"1280"
+        },
+        {
+          "variable":"video:height",
+          "value" : "720"
+        },
+        {
+      	  "variable":"video:framerate",
+          "value" : "25"
+        },
+        {
+          "variable":"video:gop_size",
+          "value" : "50"  
+        },
+        {
+          "variable":"out:udp_port",
+          "value" : "29999"
+        },
+        {
+          "variable":"out:udp_host",
+          "value" : "127.0.0.1"  
+        }
+      ],
       "cpus"                    : "0-1"
     }
   ]
