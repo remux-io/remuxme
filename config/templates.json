@@ -2,18 +2,22 @@
   {
     "name":"transcoder",
     "program":null,
-    "args":[
+    "args": [
       "-re",
-      "-i", "${remux:{in:source}}",
-      "-c:v", "libx264",
-      "-g", "50",
-      "-r", "25",
-      "-f", "hls",
-      "-hls_time", "2",
-      "-hls_list_size", "30",
-      "-hls_flags", "delete_segments",
-      "-hls_segment_filename", "${remux:{out:hls:segment_path}}",
-      "-y", "${remux:{out:hls:playlist_path}}"
+      "-f",
+      "lavfi",
+      "-i",
+      "testsrc=duration=-1:size=${remux:{video:width}}x${remux:{video:height}}:rate=${remux:{video:framerate}}",
+      "-c:v",
+      "libx264",
+      "-g",
+      "${remux:{video:gop_size}}",
+      "-r",
+      "${remux:{video:framerate}}",
+      "-f",
+      "mpegts",
+      "-y",
+      "udp://@${remux:{out:udp_host}}:${remux:{out:udp_port}}"
     ]
   }
 ]

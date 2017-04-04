@@ -21,8 +21,9 @@
       "description"             : "[still no work] Using ffmpeg template.",
       "program"                 : null,
       "args"                    : null,
-      "template"                : "test-add",
-"variables":[
+      "cpus"                    : "0-1",
+      "template"                : "transcoder",
+      "variables":[
       	{
           "variable":"video:width",
           "value":"1280"
@@ -37,7 +38,7 @@
         },
         {
           "variable":"video:gop_size",
-          "value" : "50"  
+          "value" : "50"
         },
         {
           "variable":"out:udp_port",
@@ -45,10 +46,9 @@
         },
         {
           "variable":"out:udp_host",
-          "value" : "127.0.0.1"  
+          "value" : "127.0.0.1"
         }
-      ],
-      "cpus"                    : "0-1"
+      ]
     }
   ]
 }
