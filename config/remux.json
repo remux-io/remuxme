@@ -2,7 +2,7 @@
   "ssl": "false",
   "host": "0.0.0.0",
   "port": 4444,
-  "debugGraphiQL": true,
+  "debugGraphQL": true,
   "admin": "remux",
   "pass": "remuxme",
   "ffmpegDefaultPath": "/usr/bin/ffmpeg"
