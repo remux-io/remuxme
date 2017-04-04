@@ -53,27 +53,28 @@ graphql
 ```
 Commands:
 
-  help [command...]                                  Provides help for a given command.
-  exit                                               Exits application.
-  list                                               List remux processes.
-  start <id>                                         Start ffmpeg service.
-  stop <id>                                          Stop ffmpeg service.
-  restart <id>                                       Restart ffmpeg service.
-  info <id>                                          Get full information about ffmpeg
-                                                     service.
-  process set <id> [variable] [value]                Set or view ffmpeg-service valiables.
-  server start                                       Start/Restart Remux server.
-  server restart                                     Restart Remux server.
-  server stop                                        Stop Remux server.
-  server set [variable] [value]                      Set or view Remux valiables.
-  connect local                                      Connect to local server.
-  connect host <id>                                  Connect to remote server.
-  connect info                                       Info for current Remux host connection.
-  host list                                          List of configured remote hosts.
-  host settings <id>                                 Get host settings by id.
-  host add <name> <ssl> <host> <port> <user> <pass>  Add new host.
-  host remove <id>                                   Remove host configuration.
-  host set <id> <variable> <value>                   Set host valiable.
+    help [command...]                                  Provides help for a given command.
+    exit                                               Exits application.
+    list                                               List remux processes.
+    start <id>                                         Start ffmpeg service.
+    stop <id>                                          Stop ffmpeg service.
+    restart <id>                                       Restart ffmpeg service.
+    info <id>                                          Get full information about ffmpeg service.
+    taskset <id> <cpus>                                Change CPU affinity for working process.
+    process set <id> [variable] [value]                Set or view ffmpeg-service valiables.
+    server start                                       Start/Restart Remux server.
+    server restart                                     Restart Remux server.
+    server stop                                        Stop Remux server.
+    server set [variable] [value]                      Set or view Remux valiables.
+    connect local                                      Connect to local server.
+    connect host <id>                                  Connect to remote server.
+    connect info                                       Info for current Remux host connection.
+    host list                                          List of configured remote hosts.
+    host settings <id>                                 Get host settings by id.
+    host add <name> <ssl> <host> <port> <user> <pass>  Add new host.
+    host remove <id>                                   Remove host configuration.
+    host set <id> <variable> <value>                   Set host valiable.
+
 
 ```
 

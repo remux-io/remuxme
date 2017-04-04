@@ -80,29 +80,6 @@ cmd.start.action(function(args, callback) {
 });
 
 
-cmd.start = vorpal.command('taskset <id> <cpus>', 'Change CPU affinity for working process.')
-cmd.start.action(function(args, callback) {
-  var this_cmd = this
-
-  if (connection_source){
-      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
-      args.host = connection_source.host
-      args.port = connection_source.port
-  }
-
-  var client = new client_api(connection_source)
-
-  client.exec('cpus', args, function(err, msg){
-    if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold(err))
-      if (callback) callback()
-    }else{
-      this_cmd.log(msg)
-      if (callback) callback()
-    }
-  })
-});
-
 
 cmd.stop = vorpal.command('stop <id>', 'Stop ffmpeg service.')
 cmd.stop.action(function(args, callback) {
@@ -167,6 +144,30 @@ cmd.info.action(function(args, callback) {
     }else{
       this_cmd.log(pretty_cli.chalk.blue('List of sets'))
       this_cmd.log(pretty_cli.env_table(list).toString())
+      if (callback) callback()
+    }
+  })
+});
+
+
+cmd.start = vorpal.command('taskset <id> <cpus>', 'Change CPU affinity for working process.')
+cmd.start.action(function(args, callback) {
+  var this_cmd = this
+
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  var client = new client_api(connection_source)
+
+  client.exec('cpus', args, function(err, msg){
+    if (err){
+      this_cmd.log(pretty_cli.chalk.red.bold(err))
+      if (callback) callback()
+    }else{
+      this_cmd.log(msg)
       if (callback) callback()
     }
   })
