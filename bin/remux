@@ -363,6 +363,7 @@ cmd.server_local = vorpal.command('connect local', 'Connect to local server.')
 cmd.server_local.action(function(args, callback){
     var this_cmd = this
     connection_source = null;
+    socket_connect()
     delimiter()
     this_cmd.log('Remux connection changed to local.')
     if (callback) callback()
