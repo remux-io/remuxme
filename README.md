@@ -19,6 +19,7 @@ $ npm install https://github.com/remux-io/remuxme.git -g
 - cpu affinity
 - command line
 - graphql api
+- log streaming
 
 
 ### start cli
@@ -43,7 +44,6 @@ graphql
 
 ### road map
   - graphql auth
-  - logs streaming
   - modules integration
   - user manual
   - api documentation
@@ -74,8 +74,8 @@ Commands:
     host add <name> <ssl> <host> <port> <user> <pass>  Add new host.
     host remove <id>                                   Remove host configuration.
     host set <id> <variable> <value>                   Set host valiable.
-
-
+    log start <id>                                     Attach to log stream for process.
+    log stop <id>                                      Disconnect from log stream for process.
 ```
 
 
