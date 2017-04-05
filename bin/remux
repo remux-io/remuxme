@@ -477,7 +477,7 @@ vorpal.log('')
 vorpal.execSync('server start')
 setTimeout(function(){
   socket_connect()
-},1000)
+},2000)
 
 delimiter()
 vorpal.show();
