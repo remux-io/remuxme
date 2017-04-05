@@ -17,11 +17,13 @@ const client_api = require('../').client
 const server_api = require('../').server
 const config = require('../lib/config.js');
 const pretty_cli = require('../lib/pretty-cli.js');
+const socket = require('../lib/client-io');
+const moment = require('moment');
 
 
 var cmd = {}
 var connection_source = null
-
+var io = null;
 
 function delimiter(){
     if (connection_source){
@@ -30,6 +32,43 @@ function delimiter(){
         vorpal.delimiter('[#][remux][local] ')
     }
 }
+
+function socket_connect(){
+  if (io) io.socket.disconnect()
+  var args = {}
+
+  if (connection_source){
+      args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
+      args.host = connection_source.host
+      args.port = connection_source.port
+  }
+
+  io = new socket(args)
+
+  io.on('connect', function(){
+    vorpal.log('socket connect\n');
+  })
+  io.on('connect_error', function(){
+    vorpal.log('connect_error\n');
+  })
+  io.on('connect_timeout', function(){
+    vorpal.log('connect_timeout\n');
+  })
+  io.on('error', function(){
+    vorpal.log('error\n');
+  })
+
+  io.on('log', function(logmsg){
+    vorpal.log(
+      '| '+pretty_cli.chalk.gray(moment(logmsg.time).format('MMM Do HH:mm:ss'))+' |',
+      pretty_cli.chalk.green.bold(logmsg.name)+' |',
+      pretty_cli.chalk.blue.bold(logmsg.data)
+    )
+  })
+
+  io.connect()
+}
+
 
 
 cmd.list = vorpal.command('list', 'List remux processes.')
@@ -334,6 +373,7 @@ cmd.server_connect = vorpal.command('connect host <id>', 'Connect to remote serv
 cmd.server_connect.action(function(args, callback){
     var this_cmd = this
     connection_source = config.hosts.info(args.id)
+    socket_connect()
     delimiter()
     this_cmd.log(`Remux connection changed to ${connection_source.name}.`)
     if (callback) callback()
@@ -397,6 +437,21 @@ cmd.host_set.action(function(args, callback){
 })
 
 
+cmd.log_start = vorpal.command('log start <id>', 'Attach to log stream for process.')
+cmd.log_start.action(function(args, callback){
+  var this_cmd = this
+  io.join(args.id)
+  if (callback) callback()
+})
+
+
+cmd.log_stop = vorpal.command('log stop <id>', 'Disconnect from log stream for process.')
+cmd.log_stop.action(function(args, callback){
+  var this_cmd = this
+  io.leave(args.id)
+  if (callback) callback()
+})
+
 
 
 
@@ -420,6 +475,9 @@ vorpal.log(pretty_cli.chalk.gray.bold('For interactive help, type "help".'))
 vorpal.log('')
 
 vorpal.execSync('server start')
+setTimeout(function(){
+  socket_connect()
+},1000)
 
 delimiter()
 vorpal.show();

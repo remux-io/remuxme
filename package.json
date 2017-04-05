@@ -55,13 +55,14 @@
     "jsonfile": "^2.4.0",
     "pm2": "^2.4.2",
     "request": "^2.81.0",
+    "socket.io": "^1.7.3",
+    "socket.io-client": "^1.7.3",
     "vorpal": "^1.11.4"
   },
   "runtime": {
-      "framework": "node",
-      "version": "6.8.1",
-      "js-flags": "--use_strict",
-      "ignoreFlags": true
+    "framework": "node",
+    "version": "6.8.1",
+    "js-flags": "--use_strict",
+    "ignoreFlags": true
   }
-
 }
