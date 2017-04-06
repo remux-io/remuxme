@@ -13,12 +13,14 @@
 "use strict"
 
 const vorpal = require('vorpal')();
+const async = require('async');
+const moment = require('moment');
+
 const client_api = require('../').client
 const server_api = require('../').server
 const config = require('../lib/config.js');
 const pretty_cli = require('../lib/pretty-cli.js');
 const socket = require('../lib/client-io');
-const moment = require('moment');
 
 
 var cmd = {}
@@ -110,21 +112,62 @@ function connection_args(){
 
 
 cmd.list = vorpal.command('list', 'List remux processes.')
+cmd.list.option('-a, --all', 'List all process from all online hosts.')
 cmd.list.action(function(args, callback) {
   var this_cmd = this
 
-  var client = new client_api(connection_args())
-  client.exec(null, null, function(err, list){
-    if (err){
-      // this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
-      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
-      if (callback) callback()
-    }else{
-      this_cmd.log(pretty_cli.print('List of remux-ffmpeg services:', 'info', connection_args().name))
-      this_cmd.log(pretty_cli.processes_table(list).toString())
-      if (callback) callback()
-    }
-  })
+  if (args.options.all){
+      var remux_conf = config.remux.read_json()
+      var hosts = config.hosts.list() || []
+
+      hosts.push({
+        name: 'local',
+        ssl: remux_conf.ssl,
+        host: (remux_conf.host=='0.0.0.0'?'127.0.0.1':remux_conf.host),
+        port: remux_conf.port,
+        user: remux_conf.admin,
+        pass: remux_conf.pass
+      })
+
+      async.map(hosts, function(host, cb){
+          var client = new client_api(host)
+          client.exec(null, null, function(err, list){
+
+            var res = {
+              host: host,
+              result: list
+            }
+
+            if (cb) cb(null, res)
+          })
+      }, function(err, results){
+            var list_result = []
+            results.forEach(function(host_list){
+                if (host_list.result){
+                    host_list.result.forEach(function(item){
+                        item.host = host_list.host.name
+                        list_result.push(item)
+                    })
+                }
+            })
+            this_cmd.log(pretty_cli.print('List of remux-ffmpeg services flom all online hosts:', 'info', connection_args().name))
+            this_cmd.log(pretty_cli.processes_table(list_result, true).toString())
+            if (callback) callback()
+      });
+  }else{
+      var client = new client_api(connection_args())
+      client.exec(null, null, function(err, list){
+        if (err){
+          // this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+          this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
+          if (callback) callback()
+        }else{
+          this_cmd.log(pretty_cli.print('List of remux-ffmpeg services:', 'info', connection_args().name))
+          this_cmd.log(pretty_cli.processes_table(list).toString())
+          if (callback) callback()
+        }
+      })
+  }
 });
 
 cmd.start = vorpal.command('start <id>', 'Start ffmpeg service.')
@@ -430,12 +473,11 @@ cmd.log_stop.action(function(args, callback){
 
 
 
-
-cmd.debug = vorpal.command('__node_process')
-cmd.debug.action(function(args, callback){
-  this.log(process);
-  if (callback) callback()
-})
+// cmd.debug = vorpal.command('__node_process')
+// cmd.debug.action(function(args, callback){
+//   this.log(process);
+//   if (callback) callback()
+// })
 
 
 
