@@ -1,9 +1,9 @@
-# remuxme (beta)
+# remuxme (production beta)
 Ffmpeg process manager
 (cli and graphql)
 
 
-![remuxcli](https://raw.githubusercontent.com/remux-io/remuxme/master/img/remuxcli.png "remux cli")
+[![asciicast](https://asciinema.org/a/111578.png)](https://asciinema.org/a/111578)
 
 
 ### installation
@@ -11,6 +11,7 @@ Ffmpeg process manager
 ```
 $ npm install https://github.com/remux-io/remuxme.git -g
 ```
+
 
 ### features
 - ffmpeg as process
@@ -20,6 +21,7 @@ $ npm install https://github.com/remux-io/remuxme.git -g
 - command line
 - graphql api
 - log streaming
+- nodejs api
 
 
 ### start cli
@@ -30,20 +32,38 @@ non global
 ```
 $ [remuxmeHome]/bin/remux
 ```
+
+### config information
+on first start remux make `~/.remux.io/` folder and put all configuration files there.
+to edit demo ffmped process or add new please look `~/.remux.io/processes.json`
+(also the feature to change ffmpeg params and add new process from cli is in road map )
+
+
+### video tutorials
+
+ffmpeg stream log
+[![asciicast](https://asciinema.org/a/111579.png)](https://asciinema.org/a/111579)
+
+manage remote remux node
+[![asciicast](https://asciinema.org/a/111586.png)](https://asciinema.org/a/111586)
+
+config processes and taskset
+[![asciicast](https://asciinema.org/a/111595.png)](https://asciinema.org/a/111595)
+
+remote remux node config change
+[![asciicast](https://asciinema.org/a/111600.png)](https://asciinema.org/a/111600)
+
+
 ### screen-shots
-
-ffmpeg-service start
-![remuxcli](https://raw.githubusercontent.com/remux-io/remuxme/master/img/startservice.png "ffmpeg-service")
-
-remux-server configs
-![remuxcli](https://raw.githubusercontent.com/remux-io/remuxme/master/img/listofsets.png "envs")
 
 graphql
 ![remuxcli](https://raw.githubusercontent.com/remux-io/remuxme/master/img/graphql.png "remux graphql")
 
 
 ### road map
-  - graphql auth
+  - ffmpeg process add / remove from cli
+  - ffmpeg process params edit from cli
+  - ffmpeg process template configuration
   - modules integration
   - user manual
   - api documentation
@@ -55,7 +75,7 @@ Commands:
 
     help [command...]                                  Provides help for a given command.
     exit                                               Exits application.
-    list                                               List remux processes.
+    list [options]                                     List remux processes.
     start <id>                                         Start ffmpeg service.
     stop <id>                                          Stop ffmpeg service.
     restart <id>                                       Restart ffmpeg service.
