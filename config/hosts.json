@@ -14,13 +14,5 @@
     "port": 4000,
     "user": "remux",
     "pass": "remuxme"
-  },
-  {
-    "name": "remux.io",
-    "ssl": "false",
-    "host": "www.remux.io",
-    "port": 4444,
-    "user": "admin",
-    "pass": "remuxme"
   }
 ]

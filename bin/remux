@@ -450,6 +450,18 @@ vorpal.log(pretty_cli.chalk.green(`
 vorpal.log(pretty_cli.chalk.gray.bold('For interactive help, type "help".'))
 vorpal.log('')
 
+config.settings.check_settings_dir(function(exist){
+    if (!exist){
+        config.settings.init_settings_dir(function(err, settingsDirPath){
+            if (!err){
+                vorpal.log(pretty_cli.print(`Init settings folder and config files - "${settingsDirPath}"`, 'sucsses'))
+            }else{
+                vorpal.log(pretty_cli.print(`Cannot initialize settings folder and config files - "${settingsDirPath}"`, 'err'))
+            }
+        })
+    }
+})
+
 vorpal.execSync('server start')
 setTimeout(function(){
   socket_connect()
