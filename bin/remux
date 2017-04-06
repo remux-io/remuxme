@@ -27,9 +27,9 @@ var io = null;
 
 function delimiter(){
     if (connection_source){
-        vorpal.delimiter(pretty_cli.chalk.cyan(`[#][remux][${connection_source.name}] `))
+        vorpal.delimiter(pretty_cli.chalk.cyan(`[#][remux][${connection_source.name}]`))
     }else{
-        vorpal.delimiter(pretty_cli.chalk.cyan('[#][remux][local] '))
+        vorpal.delimiter(pretty_cli.chalk.cyan('[#][remux][local]'))
     }
 }
 
@@ -46,70 +46,38 @@ function socket_connect(){
   io = new socket(args)
 
   io.on('connect', function(){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment().format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold('remux:socket') + pretty_cli.chalk.gray('][')+
-      pretty_cli.chalk.green('connect')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('connect', 'info', connection_args().name))
   })
   io.on('connect_error', function(){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment().format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold('remux:socket') + pretty_cli.chalk.gray('][')+
-      pretty_cli.chalk.red('connect error')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('connect error', 'err', connection_args().name))
   })
   io.on('connect_timeout', function(){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment().format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold('remux:socket') + pretty_cli.chalk.gray('][')+
-      pretty_cli.chalk.red('connect timeout')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('connect timeout', 'war', connection_args().name))
   })
   io.on('error', function(){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment().format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold('remux:server') + pretty_cli.chalk.gray('][')+
-      pretty_cli.chalk.red('error')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('unknown error', 'err', connection_args().name))
   })
 
   io.on('log', function(data){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment(data.time).format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold(data.name.replace('remux_ffmpeg_', '')) + pretty_cli.chalk.gray('][')+
-      pretty_cli.chalk.green(data.data)+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print(data.data, 'log', data.name.replace('remux_ffmpeg_', ''), data.time))
   })
 
 
   io.on('process:online', function(data){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment(data.time).format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold(data.name) + pretty_cli.chalk.gray('][')+ pretty_cli.chalk.green('starting...')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('starting...', 'sucsses', data.name.replace('remux_ffmpeg_', ''), data.time))
   })
 
   io.on('process:restart', function(data){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment(data.time).format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold(data.name) + pretty_cli.chalk.gray('][')+ pretty_cli.chalk.yellow('restarting...')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('restarting...', 'war', data.name.replace('remux_ffmpeg_', ''), data.time))
   })
 
 
   io.on('process:exit', function(data){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment(data.time).format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold(data.name) + pretty_cli.chalk.gray('][')+ pretty_cli.chalk.red('exit')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('exit', 'war', data.name.replace('remux_ffmpeg_', ''), data.time))
   })
 
   io.on('process:stop', function(data){
-    vorpal.log(
-      pretty_cli.chalk.gray('[@]['+  moment(data.time).format('MMM Do HH:mm:ss')+ '][')+
-      pretty_cli.chalk.blue.bold(data.name) + pretty_cli.chalk.gray('][')+ pretty_cli.chalk.red('stop')+pretty_cli.chalk.gray(']')
-    )
+    vorpal.log(pretty_cli.print('stop', 'sucsses', data.name.replace('remux_ffmpeg_', ''), data.time))
   })
 
   io.connect()
@@ -119,12 +87,14 @@ function socket_connect(){
 
 function connection_args(){
   var args = {}
+
   if (connection_source){
       args.protocol = (connection_source.ssl === true || connection_source.ssl == "true" ?'https':'http')
       args.host = connection_source.host || '127.0.0.1'
       args.port = connection_source.port || '4000'
       args.user = connection_source.user || 'remux'
       args.pass = connection_source.pass || 'remuxme'
+      args.name = connection_source.name || connection_source.host
   }else{
     var json = config.remux.read_json()
     args.protocol = (json.ssl === true || json.ssl == "true" ?'https':'http')
@@ -132,6 +102,7 @@ function connection_args(){
     args.port = json.port
     args.user = json.user
     args.pass = json.pass
+    args.name = 'local'
   }
   return args
 }
@@ -145,11 +116,12 @@ cmd.list.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec(null, null, function(err, list){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      // this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
-        +pretty_cli.processes_table(list).toString()+'\n')
+      this_cmd.log(pretty_cli.print('List of remux-ffmpeg services:', 'info', connection_args().name))
+      this_cmd.log(pretty_cli.processes_table(list).toString())
       if (callback) callback()
     }
   })
@@ -162,11 +134,11 @@ cmd.start.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('start', args, function(err, list){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
-        +pretty_cli.processes_table(list).toString()+'\n')
+      this_cmd.log(pretty_cli.print('List of remux-ffmpeg services', 'info', connection_args().name))
+      this_cmd.log(pretty_cli.processes_table(list).toString())
       if (callback) callback()
     }
   })
@@ -180,11 +152,11 @@ cmd.stop.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('stop', args, function(err, list){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
-        +pretty_cli.processes_table(list).toString()+'\n')
+      this_cmd.log(pretty_cli.print('List of remux-ffmpeg services', 'info', connection_args().name))
+      this_cmd.log(pretty_cli.processes_table(list).toString())
       if (callback) callback()
     }
   })
@@ -197,11 +169,11 @@ cmd.restart.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('start', args, function(err, list){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log(pretty_cli.chalk.gray.bold("List of remux-ffmpeg services:\n")
-        +pretty_cli.processes_table(list).toString()+'\n')
+      this_cmd.log(pretty_cli.print('List of remux-ffmpeg services', 'info', connection_args().name))
+      this_cmd.log(pretty_cli.processes_table(list).toString())
       if (callback) callback()
     }
   })
@@ -214,10 +186,10 @@ cmd.info.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('info', args, function(err, list){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+      this_cmd.log(pretty_cli.print('List of sets', 'info', connection_args().name))
       this_cmd.log(pretty_cli.env_table(list).toString())
       if (callback) callback()
     }
@@ -231,7 +203,7 @@ cmd.start.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('cpus', args, function(err, msg){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold(err))
+      this_cmd.log(pretty_cli.print(err, 'err', connection_args().name))
       if (callback) callback()
     }else{
       this_cmd.log(msg)
@@ -249,30 +221,30 @@ cmd.set.action(function(args, callback){
   if(args.variable != null && args.value == null){
     client.exec('process_get', args, function(err, msg){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
-        this_cmd.log(pretty_cli.chalk.blue(`[process]:: ${args.id}; [value of "${args.variable}"]:: ${msg}`))
+        this_cmd.log(pretty_cli.print(`[value of "${args.variable}"]:: ${msg}`, 'sucsses', args.id))
         if (callback) callback()
       }
     })
   }else if(args.variable != null && args.value != null){
     client.exec('process_set', args, function(err, msg){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
-        this_cmd.log(pretty_cli.chalk.blue(msg))
+        this_cmd.log(pretty_cli.print(msg, 'info', args.id))
         if (callback) callback()
       }
     })
   }else{
     client.exec('info', args, function(err, list){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
-        this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+              this_cmd.log(pretty_cli.print('List of sets', 'info', connection_args().name))
         this_cmd.log(pretty_cli.env_table(list).toString())
         if (callback) callback()
       }
@@ -287,7 +259,7 @@ cmd.start_server.action(function(args, callback) {
   var this_cmd = this
   var server = new server_api()
   server.start(function(err, msg){
-    this_cmd.log(pretty_cli.chalk.gray.bold(msg))
+    this_cmd.log(pretty_cli.print(msg, 'info', connection_args().name))
     if (callback) callback()
   })
 });
@@ -298,10 +270,10 @@ cmd.restart_server.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('server_restart', args, function(err, msg){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log("[server message]:: "+pretty_cli.chalk.gray.bold(msg))
+      this_cmd.log(pretty_cli.print(msg, 'info', connection_args().name))
       if (callback) callback()
     }
   })
@@ -314,10 +286,10 @@ cmd.stop_server.action(function(args, callback) {
   var client = new client_api(connection_args())
   client.exec('server_stop', args, function(err, msg){
     if (err){
-      this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+      this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
       if (callback) callback()
     }else{
-      this_cmd.log("[server message]:: "+pretty_cli.chalk.gray.bold(msg))
+      this_cmd.log(pretty_cli.print(msg, 'info', connection_args().name))
       if (callback) callback()
     }
   })
@@ -331,7 +303,7 @@ cmd.server_set.action(function(args, callback){
   if(args.variable != null && args.value == null){
     client.exec('server_get', args, function(err, msg){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
         this_cmd.log(pretty_cli.chalk.blue(`[value of "${args.variable}"]:: ${msg}`))
@@ -341,20 +313,20 @@ cmd.server_set.action(function(args, callback){
   }else if(args.variable != null && args.value != null){
     client.exec('server_set', args, function(err, msg){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
-        this_cmd.log(pretty_cli.chalk.blue(msg))
+        this_cmd.log(pretty_cli.print(msg, 'info', connection_args().name))
         if (callback) callback()
       }
     })
   }else{
     client.exec('server_listSets', args, function(err, list){
       if (err){
-        this_cmd.log(pretty_cli.chalk.red.bold('Cannot connect to Remux server. Please try to execute command "server start" and try again.'))
+        this_cmd.log(pretty_cli.print('Cannot connect to Remux server. Please try to execute command "server start" and try again.', 'err', connection_args().name))
         if (callback) callback()
       }else{
-        this_cmd.log(pretty_cli.chalk.blue('List of sets'))
+        this_cmd.log(pretty_cli.print('list of sets', 'info', connection_args().name))
         this_cmd.log(pretty_cli.env_table(list).toString())
         if (callback) callback()
       }
@@ -368,7 +340,7 @@ cmd.server_local.action(function(args, callback){
     connection_source = null;
     socket_connect()
     delimiter()
-    this_cmd.log('Remux connection changed to local.')
+    this_cmd.log(pretty_cli.print('Remux connection changed to local.', 'sucsses', connection_args().name))
     if (callback) callback()
 })
 
@@ -379,7 +351,7 @@ cmd.server_connect.action(function(args, callback){
     connection_source = config.hosts.info(args.id)
     socket_connect()
     delimiter()
-    this_cmd.log(`Remux connection changed to ${connection_source.name}.`)
+    this_cmd.log(pretty_cli.print(`Remux connection changed to ${connection_source.name}.`, 'sucsses', connection_args().name))
     if (callback) callback()
 })
 
@@ -391,7 +363,7 @@ cmd.server_info.action(function(args, callback){
     if (connection_source){
         this_cmd.log(pretty_cli.env_table(connection_source).toString())
     }else{
-        this_cmd.log('[info]:: Connected to local Remux server.')
+        this_cmd.log(pretty_cli.print(`Connected to local Remux server.`, 'sucsses', connection_args().name))
     }
 
     if (callback) callback()

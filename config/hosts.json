@@ -20,7 +20,7 @@
     "ssl": "false",
     "host": "www.remux.io",
     "port": 4444,
-    "user": "remux",
+    "user": "admin",
     "pass": "remuxme"
   }
 ]
