@@ -9,7 +9,7 @@ Ffmpeg process manager
 ### installation
 
 ```
-$ npm install https://github.com/remux-io/remuxme.git -g
+$ sudo npm install remuxme -g
 ```
 
 
@@ -27,10 +27,6 @@ $ npm install https://github.com/remux-io/remuxme.git -g
 ### start cli
 ```
 $ remux
-```
-non global
-```
-$ [remuxmeHome]/bin/remux
 ```
 
 ### config information
