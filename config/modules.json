@@ -1,0 +1,28 @@
+[
+  {
+    "name":"packetizer",
+    "settings":{
+      "path":"/home/stojnovsky/Dev/remux.io/packetizer",
+      "enabled":true,
+      "host:address":"127.0.0.1",
+      "host:port":9004,
+      "redis:host":"127.0.0.1",
+      "redis:port":6379,
+      "redis:prefix":"remux:app:",
+      "file:storage":"/data/video"
+    }
+  },
+  {
+    "name":"delivery",
+    "settings":{
+      "path":null,
+      "enabled":false,
+      "host:address":"127.0.0.1",
+      "host:port":9002,
+      "redis:host":"127.0.0.1",
+      "redis:port":6379,
+      "redis:prefix":"remux:app:",
+      "file:storage":"/data/video"
+    }
+  }
+]

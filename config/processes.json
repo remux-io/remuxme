@@ -1,54 +1,82 @@
 {
-  "processes" :[
+  "processes": [
     {
-      "name"      : "NullTV",
-      "description" : "Ffmpeg testsrc to udp://127.0.0.1:30000",
-      "program"   : null,
-      "args"      : [
+      "name": "NullTV1",
+      "description": "Ffmpeg testsrc to udp://127.0.0.1:30000",
+      "program": null,
+      "args": [
         "-re",
-        "-f",   "lavfi",
-        "-i",   "testsrc=duration=-1:size=640x360:rate=25",
-        "-c:v", "libx264",
-        "-g",   "50",
-        "-r",   "25",
-        "-f",   "mpegts",
-        "-y",   "udp://127.0.0.1:30000"
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc=duration=-1:size=640x360:rate=25",
+        "-c:v",
+        "libx264",
+        "-g",
+        "50",
+        "-r",
+        "25",
+        "-f",
+        "mpegts",
+        "-y",
+        "udp://127.0.0.1:30000"
       ],
-      "cpus"      : "0-1"
+      "cpus": "0-1"
     },
     {
-      "name"                    : "TemplateTV",
-      "description"             : "[still no work] Using ffmpeg template.",
-      "program"                 : null,
-      "args"                    : null,
-      "cpus"                    : "0-1",
-      "template"                : "transcoder",
-      "variables":[
-      	{
-          "variable":"video:width",
-          "value":"1280"
-        },
-        {
-          "variable":"video:height",
-          "value" : "720"
-        },
-        {
-      	  "variable":"video:framerate",
-          "value" : "25"
-        },
-        {
-          "variable":"video:gop_size",
-          "value" : "50"
-        },
-        {
-          "variable":"out:udp_port",
-          "value" : "29999"
-        },
-        {
-          "variable":"out:udp_host",
-          "value" : "127.0.0.1"
-        }
-      ]
+      "name": "DVR",
+      "description": "DVR Test",
+      "modules":["packetizer"],
+      "program": null,
+      "settings": {
+        "channel:id":"0x150",
+        "profile:1:name":"HI",
+        "profile:1:resolution":"720x576",
+        "profile:1:bandwidth":"1600000",
+        "profile:1:default":"YES",
+        "hls:list_size":"5",
+        "hls:chunk_size":"2",
+        "hls:warp":"45000"
+      },
+      "args": [
+        "-re",
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc=duration=-1:size={$remux{{profile:1:resolution}}}:rate=25",
+        "-c:v",
+        "libx264",
+        "-g",
+        "50",
+        "-r",
+        "25",
+        "-f",
+        "hls",
+        "-fflags",
+        "+genpts+sortdts+bitexact",
+        "-hls_list_size",
+        "{$remux{{hls:list_size}}}",
+        "-hls_time",
+        "{$remux{{hls:chunk_size}}}",
+        "-hls_base_url",
+        "{$remux{{profile:1:name}}}/",
+        "-hls_wrap",
+        "{$remux{{hls:warp}}}",
+        "-hls_segment_filename",
+        "{$remux{$packetizer{file:storage}}}/{$remux{{channel:id}}}/{$remux{{profile:1:name}}}/%06d.ts",
+        "-y",
+        "http://{$remux{$packetizer{host:address}}}:{$remux{$packetizer{host:port}}}/app/{$remux{{channel:id}}}/{$remux{{profile:1:name}}}/playlist.m3u8?resolution={$remux{{profile:1:resolution}}}&bandwidth={$remux{{profile:1:bandwidth}}}&default={$remux{{profile:1:default}}}"
+      ],
+      "cpus": "0-1"
+    },
+    {
+      "name": "TemplateTV",
+      "description": "[still no work] Using ffmpeg template.",
+      "program": null,
+      "args": null,
+      "cpus": "0-1",
+      "template": "transcoder",
+      "settings": []
     }
   ]
 }
