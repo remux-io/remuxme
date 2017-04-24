@@ -94,12 +94,18 @@ to edit demo ffmped process or add new please look `~/.remux.io/processes.json`
 (also the feature to change ffmpeg params and add new process from cli is in road map )
 
 ##### remux.json /remux server config file/
-`host`: ip address
-`port`: port number of remux server
+`host`: ip address.
+
+`port`: port number of remux server.
+
 `debugGraphQL`: If `true`, presents GraphiQL when the GraphQL endpoint is loaded in a browser.
-`admin`: user name of server access
-`pass`: password for user
-`ffmpegDefaultPath`: path to default ffmpeg binary
+
+`admin`: user name of server access.
+
+`pass`: password for user.
+
+`ffmpegDefaultPath`: path to default ffmpeg binary.
+
 ```
 {
   "ssl": "false",
@@ -114,10 +120,15 @@ to edit demo ffmped process or add new please look `~/.remux.io/processes.json`
 
 ##### processes.json /ffmpeg processes configurations/
 `name`: Name of ffmpeg process.
+
 `description`: Description for ffmpeg process.
+
 `program`: Path to ffmpeg bin. If `null` then remux will use default ffmpeg from remux.json.
+
 `args`: Array of ffmpeg arguments.
+
 `cpus`: Taskset settings.
+
 ```
 {processes:[
   {
