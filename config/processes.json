@@ -1,7 +1,7 @@
 {
   "processes": [
     {
-      "name": "NullTV1",
+      "name": "NullTV",
       "description": "Ffmpeg testsrc to udp://127.0.0.1:30000",
       "program": null,
       "args": [
@@ -24,7 +24,7 @@
       "cpus": "0-1"
     },
     {
-      "name": "NullTV2",
+      "name": "NothingTV",
       "description": "Ffmpeg testsrc to udp://127.0.0.1:30001",
       "program": null,
       "args": [
@@ -48,12 +48,19 @@
     },
     {
       "name": "TemplateTV",
-      "description": "[still no work] Using ffmpeg template.",
+      "description": "Using ffmpeg template - udp://127.0.0.1:22001",
       "program": null,
       "args": null,
       "cpus": "0-1",
       "template": "transcoder",
-      "settings": []
+      "settings": {
+        "${remux:{video:width}}":"640",
+        "${remux:{video:height}}":"360",
+        "${remux:{video:framerate}}":"25",
+        "${remux:{video:gop_size}}":"50",
+        "${remux:{out:udp_host}}":"127.0.0.1",
+        "${remux:{out:udp_port}}":"22001"
+      }
     }
   ]
 }
