@@ -1,7 +1,7 @@
 {
   "processes": [
     {
-      "name": "NullTV1",
+      "name": "NullTV",
       "description": "Ffmpeg testsrc to udp://127.0.0.1:30000",
       "program": null,
       "args": [
@@ -24,26 +24,15 @@
       "cpus": "0-1"
     },
     {
-      "name": "DVR",
-      "description": "DVR Test",
-      "modules":["packetizer"],
+      "name": "NothingTV",
+      "description": "Ffmpeg testsrc to udp://127.0.0.1:30001",
       "program": null,
-      "settings": {
-        "channel:id":"0x150",
-        "profile:1:name":"HI",
-        "profile:1:resolution":"720x576",
-        "profile:1:bandwidth":"1600000",
-        "profile:1:default":"YES",
-        "hls:list_size":"5",
-        "hls:chunk_size":"2",
-        "hls:warp":"45000"
-      },
       "args": [
         "-re",
         "-f",
         "lavfi",
         "-i",
-        "testsrc=duration=-1:size={$remux{{profile:1:resolution}}}:rate=25",
+        "testsrc=duration=-1:size=640x360:rate=25",
         "-c:v",
         "libx264",
         "-g",
@@ -51,32 +40,27 @@
         "-r",
         "25",
         "-f",
-        "hls",
-        "-fflags",
-        "+genpts+sortdts+bitexact",
-        "-hls_list_size",
-        "{$remux{{hls:list_size}}}",
-        "-hls_time",
-        "{$remux{{hls:chunk_size}}}",
-        "-hls_base_url",
-        "{$remux{{profile:1:name}}}/",
-        "-hls_wrap",
-        "{$remux{{hls:warp}}}",
-        "-hls_segment_filename",
-        "{$remux{$packetizer{file:storage}}}/{$remux{{channel:id}}}/{$remux{{profile:1:name}}}/%06d.ts",
+        "mpegts",
         "-y",
-        "http://{$remux{$packetizer{host:address}}}:{$remux{$packetizer{host:port}}}/app/{$remux{{channel:id}}}/{$remux{{profile:1:name}}}/playlist.m3u8?resolution={$remux{{profile:1:resolution}}}&bandwidth={$remux{{profile:1:bandwidth}}}&default={$remux{{profile:1:default}}}"
+        "udp://127.0.0.1:30001"
       ],
       "cpus": "0-1"
     },
     {
       "name": "TemplateTV",
-      "description": "[still no work] Using ffmpeg template.",
+      "description": "Using ffmpeg template - udp://127.0.0.1:22001",
       "program": null,
       "args": null,
       "cpus": "0-1",
       "template": "transcoder",
-      "settings": []
+      "settings": {
+        "${remux:{video:width}}":"640",
+        "${remux:{video:height}}":"360",
+        "${remux:{video:framerate}}":"25",
+        "${remux:{video:gop_size}}":"50",
+        "${remux:{out:udp_host}}":"127.0.0.1",
+        "${remux:{out:udp_port}}":"22001"
+      }
     }
   ]
 }

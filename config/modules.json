@@ -3,7 +3,7 @@
     "name":"packetizer",
     "settings":{
       "path":"/home/stojnovsky/Dev/remux.io/packetizer",
-      "enabled":true,
+      "enabled":false,
       "host:address":"127.0.0.1",
       "host:port":9004,
       "redis:host":"127.0.0.1",
