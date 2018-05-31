@@ -130,7 +130,8 @@ to edit demo ffmped process or add new please look `~/.remux.io/processes.json`
 `cpus`: Taskset settings.
 
 ```
-{processes:[
+{
+"processes":[
   {
     "name": "NullTV",
     "description": "Ffmpeg testsrc to udp://127.0.0.1:30000",
