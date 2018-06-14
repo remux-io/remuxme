@@ -154,7 +154,7 @@ to edit demo ffmped process or add new please look `~/.remux.io/processes.json`
   - pm2
   - vorpal
   - chalk
-  - cli-table2
+  - cli-table3
   - duration
   - express
   - express-graphql
